@@ -57,6 +57,8 @@ interface IntroEventDetail {
 }
 
 const INTRO_EVENT = "home-intro";
+const ORBIT_PROGRESS_EVENT = "home-orbit-progress";
+const ORBIT_ENTERED_KEY = "home-orbit-entered";
 const INTRO_DURATION = 3200;
 const FINAL_INTRO: IntroVisuals = { scene: 1, core: 1, orbits: 1, nodes: 1, labels: 1 };
 
@@ -93,6 +95,29 @@ function getArticleMoonPosition(index: number, total: number): [number, number, 
   const angle = (index / total) * Math.PI * 2 + Math.PI / 7;
   const radius = 0.82 + (index % 2) * 0.12;
   return [Math.cos(angle) * radius, Math.sin(index * 1.35) * 0.1, Math.sin(angle) * radius];
+}
+
+function getSectionOrbitAngle(index: number, total = 4) {
+  return (index / total) * Math.PI * 2 - Math.PI / 6;
+}
+
+function getFocusRotation(activeId: string, sections: UniverseSection[]) {
+  const activeIndex = sections.findIndex((section) => section.id === activeId);
+  if (activeIndex < 0) return 0;
+  return getSectionOrbitAngle(activeIndex, 4) - Math.PI / 2;
+}
+
+function getContinuousFocusRotation(progress: number, sections: UniverseSection[]) {
+  return getFocusRotation("index", sections) + progress * (Math.PI / 2);
+}
+
+function positiveModulo(value: number, divisor: number) {
+  return ((value % divisor) + divisor) % divisor;
+}
+
+function navigateFromOrbit(href: string) {
+  window.sessionStorage.setItem(ORBIT_ENTERED_KEY, "true");
+  window.location.href = href;
 }
 
 function OrbitConnector({ position, visible, highlighted, color = "#50e7ff", intro }: { position: [number, number, number]; visible: boolean; highlighted: boolean; color?: string; intro: IntroVisuals }) {
@@ -228,7 +253,7 @@ function SectionPlanet({
         onPointerEnter={() => setHovered(true)}
         onPointerLeave={() => setHovered(false)}
         onClick={() => {
-          window.location.href = section.href;
+          navigateFromOrbit(section.href);
         }}
       >
         <icosahedronGeometry args={[0.22, 3]} />
@@ -247,7 +272,7 @@ function SectionPlanet({
         onPointerEnter={() => setHovered(true)}
         onPointerLeave={() => setHovered(false)}
         onClick={() => {
-          window.location.href = section.href;
+          navigateFromOrbit(section.href);
         }}
       >
         <sphereGeometry args={[0.78, 32, 32]} />
@@ -275,9 +300,9 @@ function SpaceStation({ section, index, total, activeId, intro }: { section: Uni
 
   useFrame(({ clock }) => {
     if (!station.current) return;
-    station.current.rotation.y = clock.elapsedTime * 0.28;
-    station.current.position.y = position[1] + Math.sin(clock.elapsedTime + index) * 0.055 + (active ? 0.06 : 0);
-    station.current.position.z = active ? 0.2 : dimmed ? -0.18 : 0;
+    station.current.rotation.y = active ? 0.18 : clock.elapsedTime * 0.28;
+    station.current.position.y = Math.sin(clock.elapsedTime + index) * 0.035 + (active ? 0.04 : 0);
+    station.current.position.z = active ? 0.22 : dimmed ? -0.16 : 0;
   });
 
   return (
@@ -286,11 +311,11 @@ function SpaceStation({ section, index, total, activeId, intro }: { section: Uni
       <group
         ref={station}
         rotation={[0.22, 0, -0.14]}
-        scale={active ? 1.16 : dimmed ? 0.9 : 1}
+        scale={active ? 1.36 : dimmed ? 0.82 : 1}
         onPointerEnter={() => setHovered(true)}
         onPointerLeave={() => setHovered(false)}
         onClick={() => {
-          window.location.href = section.href;
+          navigateFromOrbit(section.href);
         }}
       >
         <mesh position={[0, 0, -0.02]}>
@@ -381,7 +406,7 @@ function SpaceStation({ section, index, total, activeId, intro }: { section: Uni
         onPointerEnter={() => setHovered(true)}
         onPointerLeave={() => setHovered(false)}
         onClick={() => {
-          window.location.href = section.href;
+          navigateFromOrbit(section.href);
         }}
       >
         <sphereGeometry args={[0.9, 24, 24]} />
@@ -433,7 +458,7 @@ function ChannelMoon({
         onPointerEnter={() => setHover(true)}
         onPointerLeave={() => setHover(false)}
         onClick={() => {
-          window.location.href = `/channels/${channel.slug}/`;
+          navigateFromOrbit(`/channels/${channel.slug}/`);
         }}
       >
         <icosahedronGeometry args={[0.092, 2]} />
@@ -443,7 +468,7 @@ function ChannelMoon({
         onPointerEnter={() => setHover(true)}
         onPointerLeave={() => setHover(false)}
         onClick={() => {
-          window.location.href = `/channels/${channel.slug}/`;
+          navigateFromOrbit(`/channels/${channel.slug}/`);
         }}
       >
         <sphereGeometry args={[0.26, 16, 16]} />
@@ -473,9 +498,9 @@ function ChannelCluster({ section, channels, activeId, intro }: { section: Unive
 
   useFrame(({ clock }) => {
     if (!group.current) return;
-    group.current.rotation.y = clock.elapsedTime * 0.18;
-    group.current.position.z = active ? 0.18 : dimmed ? -0.2 : 0;
-    group.current.scale.setScalar(active ? 1.08 : dimmed ? 0.88 : 1);
+    group.current.rotation.y = active ? 0.16 : clock.elapsedTime * 0.18;
+    group.current.position.z = active ? 0.24 : dimmed ? -0.18 : 0;
+    group.current.scale.setScalar(active ? 1.12 : dimmed ? 0.78 : 1);
   });
 
   return (
@@ -538,7 +563,7 @@ function ArticleMoon({
         onPointerEnter={() => setHover(true)}
         onPointerLeave={() => setHover(false)}
         onClick={() => {
-          window.location.href = post.href;
+          navigateFromOrbit(post.href);
         }}
       >
         <icosahedronGeometry args={[0.08, 2]} />
@@ -548,7 +573,7 @@ function ArticleMoon({
         onPointerEnter={() => setHover(true)}
         onPointerLeave={() => setHover(false)}
         onClick={() => {
-          window.location.href = post.href;
+          navigateFromOrbit(post.href);
         }}
       >
         <sphereGeometry args={[0.25, 16, 16]} />
@@ -581,9 +606,9 @@ function ArticleCluster({ section, posts, activeId, sectionIndex, intro }: { sec
 
   useFrame(({ clock }) => {
     if (!group.current) return;
-    group.current.rotation.y = clock.elapsedTime * 0.16;
-    group.current.position.z = active ? 0.18 : dimmed ? -0.2 : 0;
-    group.current.scale.setScalar(active ? 1.08 : dimmed ? 0.88 : 1);
+    group.current.rotation.y = active ? 0.14 : clock.elapsedTime * 0.16;
+    group.current.position.z = active ? 0.24 : dimmed ? -0.18 : 0;
+    group.current.scale.setScalar(active ? 1.12 : dimmed ? 0.78 : 1);
   });
 
   return (
@@ -626,10 +651,12 @@ function Scene({ data }: Props) {
   const group = useRef<Group>(null);
   const stars = useRef<Group>(null);
   const sections = useMemo(() => data.sections, [data.sections]);
-  const [activeId, setActiveId] = useState("origin");
+  const focusOrder = useMemo(() => ["index", "channels", "featured", "latest"], []);
+  const [activeId, setActiveId] = useState("index");
   const targetProgress = useRef(0);
   const smoothProgress = useRef(0);
   const autoRotation = useRef(0);
+  const orbitRotation = useRef(getFocusRotation("index", sections));
   const introStartedAt = useRef<number | null>(null);
   const [introVisuals, setIntroVisuals] = useState<IntroVisuals>(FINAL_INTRO);
 
@@ -637,6 +664,7 @@ function Scene({ data }: Props) {
     const progress = smoothProgress.current + (targetProgress.current - smoothProgress.current) * 0.065;
     smoothProgress.current = progress;
     autoRotation.current += 0.001;
+    orbitRotation.current += (getContinuousFocusRotation(progress, sections) - orbitRotation.current) * 0.055;
     if (introStartedAt.current !== null) {
       const nextIntro = getIntroVisuals((performance.now() - introStartedAt.current) / INTRO_DURATION);
       setIntroVisuals(nextIntro);
@@ -653,15 +681,15 @@ function Scene({ data }: Props) {
     }
 
     if (group.current) {
-      group.current.rotation.y = autoRotation.current + progress * 0.34 + pointer.x * 0.045;
-      group.current.rotation.x = pointer.y * 0.08;
+      group.current.rotation.y = orbitRotation.current + autoRotation.current * 0.06 + pointer.x * 0.018;
+      group.current.rotation.x = pointer.y * 0.055;
       group.current.rotation.z = pointer.x * -0.04;
-      group.current.position.x = centerOffset * -0.16;
+      group.current.position.x = pointer.x * 0.04;
       group.current.position.z = Math.sin(progress * 0.72) * 0.12 - (1 - introVisuals.scene) * 0.85;
       group.current.scale.setScalar(0.9 + introVisuals.scene * 0.1);
     }
 
-    camera.position.x += (centerOffset * 0.16 - camera.position.x) * 0.045;
+    camera.position.x += (pointer.x * 0.04 - camera.position.x) * 0.045;
     camera.position.y += (2.3 + pointer.y * 0.08 + (1 - introVisuals.scene) * 0.18 - camera.position.y) * 0.045;
     camera.lookAt(0, 0, 0);
   });
@@ -693,21 +721,21 @@ function Scene({ data }: Props) {
     if (typeof window === "undefined") return;
     const target = document.getElementById("home-horizontal");
     if (!target) return;
-    const updateActive = () => {
-      const progress = target.scrollLeft / Math.max(target.clientWidth, 1);
-      targetProgress.current = Math.min(Math.max(progress, 0), sections.length);
-      const index = Math.round(targetProgress.current);
-      const ids = ["origin", ...sections.map((section) => section.id)];
-      setActiveId(ids[Math.min(Math.max(index, 0), ids.length - 1)] ?? "origin");
+    const updateActive = (progress: number) => {
+      targetProgress.current = progress;
+      const index = positiveModulo(Math.round(progress), focusOrder.length);
+      setActiveId(focusOrder[index] ?? "index");
     };
-    updateActive();
-    target.addEventListener("scroll", updateActive, { passive: true });
-    window.addEventListener("resize", updateActive, { passive: true });
+    const handleOrbitProgress = (event: Event) => {
+      const detail = (event as CustomEvent<{ progress: number }>).detail;
+      updateActive(detail.progress ?? 0);
+    };
+    updateActive(0);
+    window.addEventListener(ORBIT_PROGRESS_EVENT, handleOrbitProgress);
     return () => {
-      target.removeEventListener("scroll", updateActive);
-      window.removeEventListener("resize", updateActive);
+      window.removeEventListener(ORBIT_PROGRESS_EVENT, handleOrbitProgress);
     };
-  }, [sections]);
+  }, [focusOrder]);
 
   const sectionById = Object.fromEntries(sections.map((section) => [section.id, section]));
   const indexedSections = Object.fromEntries(sections.map((section, index) => [section.id, { section, index }]));
