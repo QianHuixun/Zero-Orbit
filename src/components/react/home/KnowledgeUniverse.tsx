@@ -41,6 +41,48 @@ interface Props {
   data: UniverseData;
 }
 
+interface IntroVisuals {
+  scene: number;
+  core: number;
+  orbits: number;
+  nodes: number;
+  labels: number;
+}
+
+interface IntroEventDetail {
+  phase: "start" | "exiting" | "complete";
+  startedAt?: number;
+  duration?: number;
+  elapsed?: number;
+}
+
+const INTRO_EVENT = "home-intro";
+const INTRO_DURATION = 3200;
+const FINAL_INTRO: IntroVisuals = { scene: 1, core: 1, orbits: 1, nodes: 1, labels: 1 };
+
+function clamp01(value: number) {
+  return Math.min(Math.max(value, 0), 1);
+}
+
+function easeOutCubic(value: number) {
+  return 1 - Math.pow(1 - clamp01(value), 3);
+}
+
+function revealPhase(progress: number, start: number, duration: number) {
+  return easeOutCubic((progress - start) / duration);
+}
+
+function getIntroVisuals(progress: number): IntroVisuals {
+  const safeProgress = clamp01(progress);
+  return {
+    scene: 0.2 + revealPhase(safeProgress, 0.08, 0.58) * 0.8,
+    core: 0.12 + revealPhase(safeProgress, 0.1, 0.35) * 0.88,
+    orbits: revealPhase(safeProgress, 0.42, 0.3),
+    nodes: revealPhase(safeProgress, 0.52, 0.28),
+    labels: revealPhase(safeProgress, 0.68, 0.24)
+  };
+}
+
 function getChannelMoonPosition(index: number, total: number): [number, number, number] {
   const angle = (index / total) * Math.PI * 2 + Math.PI / 5;
   const radius = 0.78;
@@ -53,7 +95,7 @@ function getArticleMoonPosition(index: number, total: number): [number, number, 
   return [Math.cos(angle) * radius, Math.sin(index * 1.35) * 0.1, Math.sin(angle) * radius];
 }
 
-function OrbitConnector({ position, visible, highlighted, color = "#50e7ff" }: { position: [number, number, number]; visible: boolean; highlighted: boolean; color?: string }) {
+function OrbitConnector({ position, visible, highlighted, color = "#50e7ff", intro }: { position: [number, number, number]; visible: boolean; highlighted: boolean; color?: string; intro: IntroVisuals }) {
   if (!visible && !highlighted) return null;
 
   return (
@@ -62,12 +104,12 @@ function OrbitConnector({ position, visible, highlighted, color = "#50e7ff" }: {
       color={highlighted ? "#ffd36a" : color}
       lineWidth={highlighted ? 1.55 : 0.72}
       transparent
-      opacity={highlighted ? 0.72 : 0.24}
+      opacity={(highlighted ? 0.72 : 0.24) * intro.orbits}
       depthWrite={false}
     />
   );
 }
-function KnowledgeCore() {
+function KnowledgeCore({ intro }: { intro: IntroVisuals }) {
   const mesh = useRef<Mesh>(null);
   const aura = useRef<Mesh>(null);
 
@@ -83,14 +125,14 @@ function KnowledgeCore() {
   });
 
   return (
-    <group>
+    <group scale={0.72 + intro.core * 0.28}>
       <mesh ref={aura} scale={1.45}>
         <sphereGeometry args={[1, 48, 48]} />
-        <meshBasicMaterial color="#50e7ff" transparent opacity={0.08} depthWrite={false} />
+        <meshBasicMaterial color="#50e7ff" transparent opacity={0.08 * intro.core} depthWrite={false} />
       </mesh>
       <mesh ref={mesh}>
         <icosahedronGeometry args={[0.92, 3]} />
-        <meshStandardMaterial color="#dff8ff" emissive="#1aa7c4" emissiveIntensity={1.4} roughness={0.22} metalness={0.58} wireframe />
+        <meshStandardMaterial color="#dff8ff" emissive="#1aa7c4" emissiveIntensity={0.25 + intro.core * 1.15} roughness={0.22} metalness={0.58} wireframe transparent opacity={0.22 + intro.core * 0.78} />
       </mesh>
     </group>
   );
@@ -153,13 +195,15 @@ function SectionPlanet({
   index,
   total,
   activeId,
-  localPosition
+  localPosition,
+  intro
 }: {
   section: UniverseSection;
   index: number;
   total: number;
   activeId?: string;
   localPosition?: [number, number, number];
+  intro: IntroVisuals;
 }) {
   const [hovered, setHovered] = useState(false);
   const mesh = useRef<Mesh>(null);
@@ -176,7 +220,7 @@ function SectionPlanet({
   });
 
   return (
-    <group position={position}>
+    <group position={position} scale={0.76 + intro.nodes * 0.24} visible={intro.nodes > 0.02}>
       <StellarHover active={active} />
       <mesh
         ref={mesh}
@@ -196,7 +240,7 @@ function SectionPlanet({
           metalness={0.58}
           wireframe
           transparent
-          opacity={active ? 0.92 : dimmed ? 0.24 : 0.58}
+          opacity={(active ? 0.92 : dimmed ? 0.24 : 0.58) * intro.nodes}
         />
       </mesh>
       <mesh
@@ -210,14 +254,14 @@ function SectionPlanet({
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       <Html center distanceFactor={8} className="pointer-events-none select-none">
-        <div className={`px-1 py-0.5 text-xs font-medium transition [text-shadow:0_0_14px_rgba(80,231,255,0.45)] ${active ? "text-amber-100 [text-shadow:0_0_18px_rgba(255,211,106,0.9)]" : dimmed ? "text-text/45" : "text-text/90"}`}>
+        <div style={{ opacity: intro.labels }} className={`px-1 py-0.5 text-xs font-medium transition [text-shadow:0_0_14px_rgba(80,231,255,0.45)] ${active ? "text-amber-100 [text-shadow:0_0_18px_rgba(255,211,106,0.9)]" : dimmed ? "text-text/45" : "text-text/90"}`}>
           {section.name}
         </div>
       </Html>
     </group>
   );
 }
-function SpaceStation({ section, index, total, activeId }: { section: UniverseSection; index: number; total: number; activeId?: string }) {
+function SpaceStation({ section, index, total, activeId, intro }: { section: UniverseSection; index: number; total: number; activeId?: string; intro: IntroVisuals }) {
   const [hovered, setHovered] = useState(false);
   const station = useRef<Group>(null);
   const moduleZ = useMemo(() => [-0.38, -0.18, 0.08, 0.31], []);
@@ -237,8 +281,8 @@ function SpaceStation({ section, index, total, activeId }: { section: UniverseSe
   });
 
   return (
-    <group position={position}>
-      {active && <pointLight color="#50e7ff" intensity={2.6} distance={4.2} />}
+    <group position={position} scale={0.76 + intro.nodes * 0.24} visible={intro.nodes > 0.02}>
+      {active && <pointLight color="#50e7ff" intensity={2.6 * intro.nodes} distance={4.2} />}
       <group
         ref={station}
         rotation={[0.22, 0, -0.14]}
@@ -344,7 +388,7 @@ function SpaceStation({ section, index, total, activeId }: { section: UniverseSe
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       <Html center distanceFactor={8} className="pointer-events-none select-none">
-        <div className={`px-1 py-0.5 text-xs font-medium transition [text-shadow:0_0_14px_rgba(80,231,255,0.45)] ${active ? "text-cyan [text-shadow:0_0_18px_rgba(80,231,255,0.9)]" : "text-text/90"}`}>
+        <div style={{ opacity: intro.labels }} className={`px-1 py-0.5 text-xs font-medium transition [text-shadow:0_0_14px_rgba(80,231,255,0.45)] ${active ? "text-cyan [text-shadow:0_0_18px_rgba(80,231,255,0.9)]" : "text-text/90"}`}>
           {section.name}
         </div>
       </Html>
@@ -356,13 +400,15 @@ function ChannelMoon({
   index,
   parentActive,
   position,
-  onHoverChange
+  onHoverChange,
+  intro
 }: {
   channel: UniverseChannel;
   index: number;
   parentActive: boolean;
   position: [number, number, number];
   onHoverChange: (index: number | null) => void;
+  intro: IntroVisuals;
 }) {
   const [hovered, setHovered] = useState(false);
   const mesh = useRef<Mesh>(null);
@@ -380,7 +426,7 @@ function ChannelMoon({
   };
 
   return (
-    <group position={position} scale={parentActive ? 1 : 0.82}>
+    <group position={position} scale={(parentActive ? 1 : 0.82) * (0.78 + intro.nodes * 0.22)} visible={intro.nodes > 0.02}>
       <mesh
         ref={mesh}
         scale={hovered ? 1.28 : 1}
@@ -391,7 +437,7 @@ function ChannelMoon({
         }}
       >
         <icosahedronGeometry args={[0.092, 2]} />
-        <meshStandardMaterial color={active ? "#fff1a8" : "#50e7ff"} emissive={active ? "#ffb52e" : "#0f6c8c"} emissiveIntensity={active ? 1.2 : 0.44} roughness={0.24} metalness={0.52} wireframe transparent opacity={active ? 0.84 : 0.56} />
+        <meshStandardMaterial color={active ? "#fff1a8" : "#50e7ff"} emissive={active ? "#ffb52e" : "#0f6c8c"} emissiveIntensity={active ? 1.2 : 0.44} roughness={0.24} metalness={0.52} wireframe transparent opacity={(active ? 0.84 : 0.56) * intro.nodes} />
       </mesh>
       <mesh
         onPointerEnter={() => setHover(true)}
@@ -404,7 +450,7 @@ function ChannelMoon({
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       {(parentActive || hovered) && (
-        <Html center distanceFactor={7.5} className="pointer-events-none w-44 select-none">
+        <Html center distanceFactor={7.5} className="pointer-events-none w-44 select-none" style={{ opacity: intro.labels }}>
           <div className={`scan-preview ${hovered ? "scan-preview-active" : ""}`}>
             <div className="font-medium text-text">{channel.name}</div>
             <div className="mt-1 line-clamp-2 text-[10px] leading-4 text-muted">{channel.description}</div>
@@ -415,7 +461,7 @@ function ChannelMoon({
     </group>
   );
 }
-function ChannelCluster({ section, channels, activeId }: { section: UniverseSection; channels: UniverseChannel[]; activeId?: string }) {
+function ChannelCluster({ section, channels, activeId, intro }: { section: UniverseSection; channels: UniverseChannel[]; activeId?: string; intro: IntroVisuals }) {
   const [hovered, setHovered] = useState(false);
   const [hoveredMoon, setHoveredMoon] = useState<number | null>(null);
   const group = useRef<Group>(null);
@@ -434,18 +480,18 @@ function ChannelCluster({ section, channels, activeId }: { section: UniverseSect
 
   return (
     <group position={position} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)}>
-      <SectionPlanet section={section} index={0} total={4} activeId={activeId} localPosition={[0, 0, 0]} />
+      <SectionPlanet section={section} index={0} total={4} activeId={activeId} localPosition={[0, 0, 0]} intro={intro} />
       <group ref={group}>
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.78, 0.0035, 8, 96]} />
-          <meshBasicMaterial color="#50e7ff" transparent opacity={active ? 0.42 : dimmed ? 0.045 : 0.12} depthWrite={false} />
+          <meshBasicMaterial color="#50e7ff" transparent opacity={(active ? 0.42 : dimmed ? 0.045 : 0.12) * intro.orbits} depthWrite={false} />
         </mesh>
         {channels.map((channel, index) => {
           const moonPosition = getChannelMoonPosition(index, channels.length);
           return (
             <group key={channel.slug}>
-              <OrbitConnector position={moonPosition} visible={active} highlighted={hoveredMoon === index} />
-              <ChannelMoon channel={channel} index={index} parentActive={active} position={moonPosition} onHoverChange={setHoveredMoon} />
+              <OrbitConnector position={moonPosition} visible={active} highlighted={hoveredMoon === index} intro={intro} />
+              <ChannelMoon channel={channel} index={index} parentActive={active} position={moonPosition} onHoverChange={setHoveredMoon} intro={intro} />
             </group>
           );
         })}
@@ -459,13 +505,15 @@ function ArticleMoon({
   index,
   parentActive,
   position,
-  onHoverChange
+  onHoverChange,
+  intro
 }: {
   post: UniversePost;
   index: number;
   parentActive: boolean;
   position: [number, number, number];
   onHoverChange: (index: number | null) => void;
+  intro: IntroVisuals;
 }) {
   const [hovered, setHovered] = useState(false);
   const mesh = useRef<Mesh>(null);
@@ -483,7 +531,7 @@ function ArticleMoon({
   };
 
   return (
-    <group position={position} scale={parentActive ? 1 : 0.84}>
+    <group position={position} scale={(parentActive ? 1 : 0.84) * (0.78 + intro.nodes * 0.22)} visible={intro.nodes > 0.02}>
       <mesh
         ref={mesh}
         scale={hovered ? 1.35 : 1}
@@ -494,7 +542,7 @@ function ArticleMoon({
         }}
       >
         <icosahedronGeometry args={[0.08, 2]} />
-        <meshStandardMaterial color={active ? "#fff1a8" : "#50e7ff"} emissive={active ? "#ffb52e" : "#0f6c8c"} emissiveIntensity={active ? 1.2 : 0.44} roughness={0.24} metalness={0.52} wireframe transparent opacity={active ? 0.84 : 0.56} />
+        <meshStandardMaterial color={active ? "#fff1a8" : "#50e7ff"} emissive={active ? "#ffb52e" : "#0f6c8c"} emissiveIntensity={active ? 1.2 : 0.44} roughness={0.24} metalness={0.52} wireframe transparent opacity={(active ? 0.84 : 0.56) * intro.nodes} />
       </mesh>
       <mesh
         onPointerEnter={() => setHover(true)}
@@ -507,7 +555,7 @@ function ArticleMoon({
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       {(parentActive || hovered) && (
-        <Html center distanceFactor={7.5} className="pointer-events-none w-56 select-none">
+        <Html center distanceFactor={7.5} className="pointer-events-none w-56 select-none" style={{ opacity: intro.labels }}>
           <div className={`scan-preview ${hovered ? "scan-preview-active" : ""}`}>
             <div className="font-medium leading-4 text-text">{post.title}</div>
             <div className="mt-1 line-clamp-2 text-[10px] leading-4 text-muted">{post.summary}</div>
@@ -521,7 +569,7 @@ function ArticleMoon({
     </group>
   );
 }
-function ArticleCluster({ section, posts, activeId, sectionIndex }: { section: UniverseSection; posts: UniversePost[]; activeId?: string; sectionIndex: number }) {
+function ArticleCluster({ section, posts, activeId, sectionIndex, intro }: { section: UniverseSection; posts: UniversePost[]; activeId?: string; sectionIndex: number; intro: IntroVisuals }) {
   const [hovered, setHovered] = useState(false);
   const [hoveredMoon, setHoveredMoon] = useState<number | null>(null);
   const group = useRef<Group>(null);
@@ -540,19 +588,19 @@ function ArticleCluster({ section, posts, activeId, sectionIndex }: { section: U
 
   return (
     <group position={position} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)}>
-      <SectionPlanet section={section} index={sectionIndex} total={4} activeId={activeId} localPosition={[0, 0, 0]} />
+      <SectionPlanet section={section} index={sectionIndex} total={4} activeId={activeId} localPosition={[0, 0, 0]} intro={intro} />
       <group ref={group}>
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.86, 0.0035, 8, 96]} />
-          <meshBasicMaterial color="#ffd36a" transparent opacity={active ? 0.4 : dimmed ? 0.04 : 0.11} depthWrite={false} />
+          <meshBasicMaterial color="#ffd36a" transparent opacity={(active ? 0.4 : dimmed ? 0.04 : 0.11) * intro.orbits} depthWrite={false} />
         </mesh>
         {posts.slice(0, 6).map((post, index) => {
           const totalPosts = Math.min(posts.length, 6);
           const moonPosition = getArticleMoonPosition(index, totalPosts);
           return (
             <group key={post.id}>
-              <OrbitConnector position={moonPosition} visible={active} highlighted={hoveredMoon === index} color="#ffd36a" />
-              <ArticleMoon post={post} index={index} parentActive={active} position={moonPosition} onHoverChange={setHoveredMoon} />
+              <OrbitConnector position={moonPosition} visible={active} highlighted={hoveredMoon === index} color="#ffd36a" intro={intro} />
+              <ArticleMoon post={post} index={index} parentActive={active} position={moonPosition} onHoverChange={setHoveredMoon} intro={intro} />
             </group>
           );
         })}
@@ -561,13 +609,13 @@ function ArticleCluster({ section, posts, activeId, sectionIndex }: { section: U
   );
 }
 
-function OrbitLines() {
+function OrbitLines({ intro }: { intro: IntroVisuals }) {
   return (
     <group rotation={[Math.PI / 2, 0, 0]}>
       {[2.55, 3.45, 4.35].map((radius) => (
         <mesh key={radius}>
           <torusGeometry args={[radius, 0.003, 8, 160]} />
-          <meshBasicMaterial color="#50e7ff" transparent opacity={radius === 3.45 ? 0.22 : 0.1} />
+          <meshBasicMaterial color="#50e7ff" transparent opacity={(radius === 3.45 ? 0.22 : 0.1) * intro.orbits} />
         </mesh>
       ))}
     </group>
@@ -582,11 +630,18 @@ function Scene({ data }: Props) {
   const targetProgress = useRef(0);
   const smoothProgress = useRef(0);
   const autoRotation = useRef(0);
+  const introStartedAt = useRef<number | null>(null);
+  const [introVisuals, setIntroVisuals] = useState<IntroVisuals>(FINAL_INTRO);
 
   useFrame(({ pointer, camera, clock }) => {
     const progress = smoothProgress.current + (targetProgress.current - smoothProgress.current) * 0.065;
     smoothProgress.current = progress;
     autoRotation.current += 0.001;
+    if (introStartedAt.current !== null) {
+      const nextIntro = getIntroVisuals((performance.now() - introStartedAt.current) / INTRO_DURATION);
+      setIntroVisuals(nextIntro);
+      if (nextIntro.labels >= 0.999) introStartedAt.current = null;
+    }
 
     const centerOffset = progress - sections.length / 2;
 
@@ -594,6 +649,7 @@ function Scene({ data }: Props) {
       stars.current.rotation.y = clock.elapsedTime * 0.006 + progress * 0.08;
       stars.current.rotation.x = pointer.y * 0.025;
       stars.current.position.x = centerOffset * -0.08;
+      stars.current.scale.setScalar(0.96 + introVisuals.scene * 0.04);
     }
 
     if (group.current) {
@@ -601,13 +657,37 @@ function Scene({ data }: Props) {
       group.current.rotation.x = pointer.y * 0.08;
       group.current.rotation.z = pointer.x * -0.04;
       group.current.position.x = centerOffset * -0.16;
-      group.current.position.z = Math.sin(progress * 0.72) * 0.12;
+      group.current.position.z = Math.sin(progress * 0.72) * 0.12 - (1 - introVisuals.scene) * 0.85;
+      group.current.scale.setScalar(0.9 + introVisuals.scene * 0.1);
     }
 
     camera.position.x += (centerOffset * 0.16 - camera.position.x) * 0.045;
-    camera.position.y += (2.3 + pointer.y * 0.08 - camera.position.y) * 0.045;
+    camera.position.y += (2.3 + pointer.y * 0.08 + (1 - introVisuals.scene) * 0.18 - camera.position.y) * 0.045;
     camera.lookAt(0, 0, 0);
   });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleIntro = (event: Event) => {
+      const detail = (event as CustomEvent<IntroEventDetail>).detail;
+      if (detail.phase === "start") {
+        introStartedAt.current = detail.startedAt ?? performance.now();
+        setIntroVisuals(getIntroVisuals(0));
+        return;
+      }
+      if (detail.phase === "exiting") {
+        introStartedAt.current = null;
+        setIntroVisuals(FINAL_INTRO);
+        return;
+      }
+      if (detail.phase === "complete") {
+        introStartedAt.current = null;
+        setIntroVisuals(FINAL_INTRO);
+      }
+    };
+    window.addEventListener(INTRO_EVENT, handleIntro);
+    return () => window.removeEventListener(INTRO_EVENT, handleIntro);
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -639,16 +719,16 @@ function Scene({ data }: Props) {
         <Stars radius={90} depth={40} count={2400} factor={4.8} saturation={0.08} fade speed={0.35} />
       </group>
       <group ref={group}>
-        <ambientLight intensity={0.58} />
-        <pointLight position={[2, 3, 4]} intensity={2.2} color="#50e7ff" />
-        <pointLight position={[-4, -2, -3]} intensity={1.3} color="#9c7bff" />
-        <OrbitLines />
-        <KnowledgeCore />
-        {sectionById.channels && <ChannelCluster section={sectionById.channels} channels={data.channels} activeId={activeId} />}
-        {indexedSections.featured && <ArticleCluster section={indexedSections.featured.section} posts={data.featuredPosts} activeId={activeId} sectionIndex={indexedSections.featured.index} />}
-        {indexedSections.latest && <ArticleCluster section={indexedSections.latest.section} posts={data.latestPosts} activeId={activeId} sectionIndex={indexedSections.latest.index} />}
-        {indexedSections.index && <SpaceStation section={indexedSections.index.section} index={indexedSections.index.index} total={4} activeId={activeId} />}
-        {plainSections.map((section) => <SectionPlanet key={section.id} section={section} index={indexedSections[section.id].index} total={4} activeId={activeId} />)}
+        <ambientLight intensity={0.2 + introVisuals.scene * 0.38} />
+        <pointLight position={[2, 3, 4]} intensity={0.4 + introVisuals.core * 1.8} color="#50e7ff" />
+        <pointLight position={[-4, -2, -3]} intensity={0.25 + introVisuals.scene * 1.05} color="#9c7bff" />
+        <OrbitLines intro={introVisuals} />
+        <KnowledgeCore intro={introVisuals} />
+        {sectionById.channels && <ChannelCluster section={sectionById.channels} channels={data.channels} activeId={activeId} intro={introVisuals} />}
+        {indexedSections.featured && <ArticleCluster section={indexedSections.featured.section} posts={data.featuredPosts} activeId={activeId} sectionIndex={indexedSections.featured.index} intro={introVisuals} />}
+        {indexedSections.latest && <ArticleCluster section={indexedSections.latest.section} posts={data.latestPosts} activeId={activeId} sectionIndex={indexedSections.latest.index} intro={introVisuals} />}
+        {indexedSections.index && <SpaceStation section={indexedSections.index.section} index={indexedSections.index.index} total={4} activeId={activeId} intro={introVisuals} />}
+        {plainSections.map((section) => <SectionPlanet key={section.id} section={section} index={indexedSections[section.id].index} total={4} activeId={activeId} intro={introVisuals} />)}
       </group>
     </>
   );

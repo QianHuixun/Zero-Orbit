@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ArticleCard from "../components/astro/ArticleCard.astro";
 import ChannelCard from "../components/astro/ChannelCard.astro";
+import HomeIntro from "../components/react/home/HomeIntro";
 import HorizontalWheel from "../components/react/home/HorizontalWheel";
 import KnowledgeUniverse from "../components/react/home/KnowledgeUniverse";
 import MeteorCursor from "../components/react/home/MeteorCursor";
@@ -74,7 +75,7 @@ const universeData = {
     <div class="home-universe-bg" aria-hidden="true">
       <KnowledgeUniverse data={universeData} client:load />
     </div>
-
+    
     <header class="home-orbit-nav" aria-label="首页导航">
       <a href="/" class="flex items-center gap-3">
         <span class="h-3 w-3 rounded-full bg-cyan shadow-glow"></span>
@@ -90,19 +91,20 @@ const universeData = {
 
     <HorizontalWheel targetId="home-horizontal" client:load />
     <MeteorCursor client:load />
+    <HomeIntro client:load />
     <main id="home-horizontal" class="home-horizontal" aria-label="横向首页内容">
       <section id="origin" class="home-panel home-panel-hero">
         <div class="home-panel-inner grid items-center gap-10 lg:grid-cols-[0.86fr_1.14fr]">
           <div class="max-w-2xl">
-            <p class="kicker">Private Knowledge Universe</p>
-            <h1 class="mt-5 text-5xl font-semibold tracking-normal text-text md:text-7xl">{site.name}</h1>
-            <p class="mt-6 max-w-xl text-xl leading-9 text-muted">{site.description}</p>
-            <div class="mt-7 flex flex-wrap gap-2">
+            <p class="kicker home-intro-item" style="--intro-order: 1">Private Knowledge Universe</p>
+            <h1 class="home-intro-title home-intro-item mt-5 text-5xl font-semibold tracking-normal text-text md:text-7xl" style="--intro-order: 2">{site.name}</h1>
+            <p class="home-intro-item mt-6 max-w-xl text-xl leading-9 text-muted" style="--intro-order: 3">{site.description}</p>
+            <div class="home-intro-item mt-7 flex flex-wrap gap-2" style="--intro-order: 4">
               {site.currentFocus.map((focus) => <span class="rounded-md border border-line/60 bg-panel/70 px-3 py-2 text-sm text-muted">{focus}</span>)}
             </div>
-            <div class="mt-9 flex flex-wrap gap-3">
-              <a class="rounded-md bg-cyan px-5 py-3 text-sm font-semibold text-void shadow-glow transition hover:bg-text" href="#channels">沿星轨进入</a>
-              <a class="rounded-md border border-cyan/50 px-5 py-3 text-sm font-semibold text-cyan transition hover:bg-cyan/10" href="/search/">打开搜索</a>
+            <div class="home-intro-item mt-9 flex flex-wrap gap-3" style="--intro-order: 5">
+              <a class="rounded-md bg-cyan px-5 py-3 text-sm font-semibold text-void shadow-glow transition hover:bg-text" href="#channels">进入星轨</a>
+              <a class="rounded-md border border-cyan/50 px-5 py-3 text-sm font-semibold text-cyan transition hover:bg-cyan/10" href="/search/">搜索</a>
             </div>
           </div>
         </div>
