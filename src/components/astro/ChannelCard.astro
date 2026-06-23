@@ -1,0 +1,28 @@
+﻿---
+import { channelHref } from "../../lib/routes";
+
+interface Props {
+  channel: {
+    slug: string;
+    name: string;
+    label: string;
+    description: string;
+    orbit: number;
+  };
+  count?: number;
+}
+
+const { channel, count = 0 } = Astro.props;
+---
+
+<a class="panel group block p-5 transition hover:-translate-y-1 hover:border-cyan/50 hover:shadow-glow" href={channelHref(channel.slug)}>
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <p class="kicker">{channel.label}</p>
+      <h3 class="mt-3 text-2xl font-semibold text-text group-hover:text-cyan">{channel.name}</h3>
+    </div>
+    <span class="rounded-full border border-line/60 px-3 py-1 font-mono text-xs text-muted">{count} logs</span>
+  </div>
+  <p class="mt-4 leading-7 text-muted">{channel.description}</p>
+  <div class="mt-6 h-px bg-gradient-to-r from-cyan/50 via-line/60 to-transparent"></div>
+</a>

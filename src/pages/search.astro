@@ -1,0 +1,22 @@
+﻿---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ArticleCard from "../components/astro/ArticleCard.astro";
+import { getPublishedPosts } from "../lib/content";
+
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout title="搜索" description="搜索文章、标签和频道。">
+  <section class="container py-14 md:py-20">
+    <p class="kicker">Search Console</p>
+    <h1 class="mt-4 text-4xl font-semibold text-text md:text-6xl">检索个人知识库</h1>
+    <p class="mt-5 max-w-2xl text-lg leading-8 text-muted">Pagefind 索引将在构建后接入。当前页面先提供搜索入口结构和全部文章索引。</p>
+    <div class="panel mt-8 p-4">
+      <label class="sr-only" for="search-input">搜索</label>
+      <input id="search-input" class="w-full rounded-md border border-line/60 bg-void/70 px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-cyan focus:shadow-glow" placeholder="输入关键词，构建后将启用全文搜索" />
+    </div>
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      {posts.map((post) => <ArticleCard post={post} />)}
+    </div>
+  </section>
+</BaseLayout>

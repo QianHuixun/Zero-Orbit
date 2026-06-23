@@ -1,0 +1,36 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import ReadingOrbit from "../components/react/article/ReadingOrbit";
+import type { Post } from "../lib/content";
+import { formatDate } from "../lib/content";
+import { getChannel } from "../data/channels";
+import { channelHref, tagHref } from "../lib/routes";
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const channel = getChannel(post.data.channel);
+---
+
+<BaseLayout title={post.data.title} description={post.data.summary}>
+  <article class="container article-shell py-12 md:py-18">
+    <header class="mx-auto max-w-3xl border-b border-line/40 pb-8">
+      <div class="mb-5 flex flex-wrap items-center gap-3 text-sm text-muted">
+        {channel && <a class="rounded-full border border-cyan/30 px-3 py-1 text-cyan" href={channelHref(channel.slug)}>{channel.name}</a>}
+        <time datetime={post.data.publishedAt.toISOString()}>{formatDate(post.data.publishedAt)}</time>
+        {post.data.updatedAt && <span>更新于 {formatDate(post.data.updatedAt)}</span>}
+      </div>
+      <h1 class="text-4xl font-semibold tracking-normal text-text md:text-6xl">{post.data.title}</h1>
+      <p class="mt-5 text-lg leading-8 text-muted">{post.data.summary}</p>
+      <div class="mt-6 flex flex-wrap gap-2">
+        {post.data.tags.map((tag) => <a class="rounded-md border border-line/60 px-2.5 py-1 text-xs text-muted hover:border-cyan/60 hover:text-cyan" href={tagHref(tag)}>{tag}</a>)}
+      </div>
+    </header>
+    <ReadingOrbit client:load />
+    <div class="prose-dark mx-auto mt-10 max-w-3xl" data-pagefind-body>
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

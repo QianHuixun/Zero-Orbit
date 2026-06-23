@@ -1,0 +1,30 @@
+﻿---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ArticleCard from "../../components/astro/ArticleCard.astro";
+import EmptyState from "../../components/astro/EmptyState.astro";
+import { getAllTags, getPostsByTag, getPublishedPosts } from "../../lib/content";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return getAllTags(posts).map((tag) => ({ params: { tag: tag.name }, props: { tag: tag.name } }));
+}
+
+const tag = Astro.props.tag as string;
+const posts = getPostsByTag(await getPublishedPosts(), tag);
+---
+
+<BaseLayout title={`标签：${tag}`} description={`查看 ${tag} 标签下的文章。`}>
+  <section class="container py-14 md:py-20">
+    <p class="kicker">Tag Node</p>
+    <h1 class="mt-4 text-4xl font-semibold text-text md:text-6xl">#{tag}</h1>
+    <div class="mt-10">
+      {posts.length > 0 ? (
+        <div class="grid gap-4 md:grid-cols-2">
+          {posts.map((post) => <ArticleCard post={post} />)}
+        </div>
+      ) : (
+        <EmptyState title="没有匹配文章" description="这个标签暂时没有可公开浏览的文章。" />
+      )}
+    </div>
+  </section>
+</BaseLayout>

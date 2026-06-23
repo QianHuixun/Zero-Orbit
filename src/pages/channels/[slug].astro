@@ -1,0 +1,32 @@
+﻿---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ArticleCard from "../../components/astro/ArticleCard.astro";
+import EmptyState from "../../components/astro/EmptyState.astro";
+import { channels, getChannel } from "../../data/channels";
+import { getPostsByChannel, getPublishedPosts } from "../../lib/content";
+
+export async function getStaticPaths() {
+  return channels.map((channel) => ({ params: { slug: channel.slug } }));
+}
+
+const { slug } = Astro.params;
+const channel = getChannel(slug ?? "");
+const posts = getPostsByChannel(await getPublishedPosts(), slug ?? "");
+---
+
+<BaseLayout title={channel?.name ?? "频道"} description={channel?.description ?? "主题频道"}>
+  <section class="container py-14 md:py-20">
+    <p class="kicker">Channel Orbit</p>
+    <h1 class="mt-4 text-4xl font-semibold text-text md:text-6xl">{channel?.name}</h1>
+    <p class="mt-5 max-w-2xl text-lg leading-8 text-muted">{channel?.description}</p>
+    <div class="mt-10">
+      {posts.length > 0 ? (
+        <div class="grid gap-4 md:grid-cols-2">
+          {posts.map((post) => <ArticleCard post={post} />)}
+        </div>
+      ) : (
+        <EmptyState title="这个频道还没有记录" description="当这个轨道有文章时，它们会出现在这里。" />
+      )}
+    </div>
+  </section>
+</BaseLayout>

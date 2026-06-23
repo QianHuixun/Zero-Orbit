@@ -1,0 +1,19 @@
+﻿---
+title: "Astro 适合内容站的几个理由"
+summary: "静态生成、内容集合和 Islands 架构让 Astro 很适合作为这个博客的底座。"
+channel: "tech"
+tags: ["Astro", "前端", "架构"]
+publishedAt: 2026-06-12
+status: "published"
+featured: true
+---
+
+这个站点的核心是内容，但首页又需要复杂交互。Astro 的 Islands 架构刚好能把两者拆开。
+
+## 静态优先
+
+文章页、频道页和归档页都应该尽量保持静态输出。这样页面加载快，也更适合搜索引擎理解。
+
+## 局部增强
+
+首页星图、搜索命令面板这些需要交互的部分，再交给 React Island。这样不会把整个站点变成沉重的单页应用。

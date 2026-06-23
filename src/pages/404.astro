@@ -1,0 +1,14 @@
+﻿---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="未找到" description="页面不存在。">
+  <section class="container flex min-h-[70vh] items-center py-20">
+    <div class="max-w-2xl">
+      <p class="kicker">404 / Lost Signal</p>
+      <h1 class="mt-4 text-5xl font-semibold text-text md:text-7xl">未找到这条轨道</h1>
+      <p class="mt-5 text-lg leading-8 text-muted">这个页面不存在，或者已经从公开索引中移除。</p>
+      <a class="mt-8 inline-flex rounded-md bg-cyan px-5 py-3 text-sm font-semibold text-void shadow-glow" href="/">返回首页</a>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,175 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ArticleCard from "../components/astro/ArticleCard.astro";
+import ChannelCard from "../components/astro/ChannelCard.astro";
+import HorizontalWheel from "../components/react/home/HorizontalWheel";
+import KnowledgeUniverse from "../components/react/home/KnowledgeUniverse";
+import MeteorCursor from "../components/react/home/MeteorCursor";
+import { channels } from "../data/channels";
+import { site } from "../data/site";
+import { getAllTags, getFeaturedPosts, getLatestPosts, getPostsByChannel, getPublishedPosts } from "../lib/content";
+
+const posts = await getPublishedPosts();
+const featuredPosts = await getFeaturedPosts(3);
+const latestPosts = await getLatestPosts(6);
+const tags = getAllTags(posts).slice(0, 18);
+const channelStats = channels.map((channel) => ({
+  ...channel,
+  count: getPostsByChannel(posts, channel.slug).length
+}));
+const universeData = {
+  sections: [
+    {
+      id: "channels",
+      name: "主题频道",
+      label: "Orbits",
+      href: "#channels",
+      summary: "四个主题频道构成内容宇宙的主入口。"
+    },
+    {
+      id: "featured",
+      name: "精选轨道",
+      label: "Pinned",
+      href: "#featured",
+      summary: "被固定在星图上的高亮文章节点。"
+    },
+    {
+      id: "latest",
+      name: "最新记录",
+      label: "Logs",
+      href: "#latest",
+      summary: "沿时间线更新的航行日志。"
+    },
+    {
+      id: "index",
+      name: "索引入口",
+      label: "Index",
+      href: "#index",
+      summary: "标签、归档和搜索收束成检索入口。"
+    }
+  ],
+  channels: channelStats,
+  tags,
+  featuredPosts: featuredPosts.map((post) => ({
+    id: post.id,
+    title: post.data.title,
+    summary: post.data.summary,
+    channel: post.data.channel,
+    tags: post.data.tags,
+    href: `/posts/${post.id}/`
+  })),
+  latestPosts: latestPosts.slice(0, 6).map((post) => ({
+    id: post.id,
+    title: post.data.title,
+    summary: post.data.summary,
+    channel: post.data.channel,
+    tags: post.data.tags,
+    href: `/posts/${post.id}/`
+  }))
+};
+---
+
+<BaseLayout title="首页" description={site.description} immersive>
+  <div class="home-orbit-shell">
+    <div class="home-universe-bg" aria-hidden="true">
+      <KnowledgeUniverse data={universeData} client:load />
+    </div>
+
+    <header class="home-orbit-nav" aria-label="首页导航">
+      <a href="/" class="flex items-center gap-3">
+        <span class="h-3 w-3 rounded-full bg-cyan shadow-glow"></span>
+        <span class="font-mono text-xs tracking-[0.18em] text-text/90 md:text-sm">{site.name}</span>
+      </a>
+
+      <a class="rounded-md border border-cyan/50 px-3 py-2 text-xs text-cyan hover:bg-cyan/10" href="/search/">搜索</a>
+    </header>
+
+    <div class="home-orbit-rail" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <HorizontalWheel targetId="home-horizontal" client:load />
+    <MeteorCursor client:load />
+    <main id="home-horizontal" class="home-horizontal" aria-label="横向首页内容">
+      <section id="origin" class="home-panel home-panel-hero">
+        <div class="home-panel-inner grid items-center gap-10 lg:grid-cols-[0.86fr_1.14fr]">
+          <div class="max-w-2xl">
+            <p class="kicker">Private Knowledge Universe</p>
+            <h1 class="mt-5 text-5xl font-semibold tracking-normal text-text md:text-7xl">{site.name}</h1>
+            <p class="mt-6 max-w-xl text-xl leading-9 text-muted">{site.description}</p>
+            <div class="mt-7 flex flex-wrap gap-2">
+              {site.currentFocus.map((focus) => <span class="rounded-md border border-line/60 bg-panel/70 px-3 py-2 text-sm text-muted">{focus}</span>)}
+            </div>
+            <div class="mt-9 flex flex-wrap gap-3">
+              <a class="rounded-md bg-cyan px-5 py-3 text-sm font-semibold text-void shadow-glow transition hover:bg-text" href="#channels">沿星轨进入</a>
+              <a class="rounded-md border border-cyan/50 px-5 py-3 text-sm font-semibold text-cyan transition hover:bg-cyan/10" href="/search/">打开搜索</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="channels" class="home-panel">
+        <div class="home-panel-inner">
+          <div class="mb-8 max-w-3xl">
+            <p class="kicker">Orbits</p>
+            <h2 class="mt-3 text-4xl font-semibold text-text md:text-6xl">主题频道</h2>
+            <p class="mt-4 text-lg leading-8 text-muted">四个主星体承载不同方向的长期记录，所有文章都从这里进入更清晰的轨道。</p>
+          </div>
+          <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {channelStats.map((channel) => <ChannelCard channel={channel} count={channel.count} />)}
+          </div>
+        </div>
+      </section>
+
+      <section id="featured" class="home-panel">
+        <div class="home-panel-inner">
+          <div class="mb-8 max-w-3xl">
+            <p class="kicker">Pinned Nodes</p>
+            <h2 class="mt-3 text-4xl font-semibold text-text md:text-6xl">精选轨道</h2>
+            <p class="mt-4 text-lg leading-8 text-muted">被固定在仪表盘上的几篇文章，像星图里更亮的节点。</p>
+          </div>
+          <div class="grid gap-4 md:grid-cols-3">
+            {featuredPosts.map((post) => <ArticleCard post={post} featured />)}
+          </div>
+        </div>
+      </section>
+
+      <section id="latest" class="home-panel">
+        <div class="home-panel-inner">
+          <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p class="kicker">Latest Logs</p>
+              <h2 class="mt-3 text-4xl font-semibold text-text md:text-6xl">最新记录</h2>
+            </div>
+            <a class="text-sm text-cyan hover:text-text" href="/archive/">查看归档</a>
+          </div>
+          <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {latestPosts.map((post) => <ArticleCard post={post} />)}
+          </div>
+        </div>
+      </section>
+
+      <section id="index" class="home-panel">
+        <div class="home-panel-inner">
+          <div class="panel p-6 md:p-8">
+            <div class="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+              <div>
+                <p class="kicker">Index</p>
+                <h2 class="mt-3 text-4xl font-semibold text-text md:text-6xl">索引入口</h2>
+                <p class="mt-4 max-w-2xl text-lg leading-8 text-muted">通过标签、归档和搜索回到已经写下的内容。这里是星图收束成索引的地方。</p>
+              </div>
+              <a class="rounded-md border border-cyan/50 px-4 py-2 text-sm text-cyan hover:bg-cyan/10" href="/search/">进入检索页</a>
+            </div>
+            <div class="mt-8 flex flex-wrap gap-2">
+              {tags.map((tag) => <a class="rounded-md border border-line/60 px-3 py-2 text-sm text-muted hover:border-cyan/60 hover:text-cyan" href={`/tags/${encodeURIComponent(tag.name)}/`}>{tag.name}<span class="ml-2 font-mono text-xs">{tag.count}</span></a>)}
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+
+
+

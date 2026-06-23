@@ -1,0 +1,11 @@
+﻿:root {
+  --color-void: 5 9 18;
+  --color-surface: 9 15 28;
+  --color-panel: 13 21 38;
+  --color-line: 50 68 96;
+  --color-text: 229 238 247;
+  --color-muted: 137 154 176;
+  --color-cyan: 80 231 255;
+  --color-violet: 156 123 255;
+  --page-max: 1180px;
+}
