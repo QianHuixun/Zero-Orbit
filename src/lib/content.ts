@@ -1,11 +1,15 @@
-﻿import type { CollectionEntry } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 
 export type Post = CollectionEntry<"posts">;
 
-export async function getPublishedPosts() {
-  const posts = await getCollection("posts", ({ data }) => data.status === "published" || data.status === "archived");
+export async function getPublicPosts() {
+  const posts = await getCollection("posts", ({ data }) => data.status === "published");
   return posts.sort((a, b) => getPostDate(b).getTime() - getPostDate(a).getTime());
+}
+
+export async function getPublishedPosts() {
+  return getPublicPosts();
 }
 
 export async function getFeaturedPosts(limit = 4) {
