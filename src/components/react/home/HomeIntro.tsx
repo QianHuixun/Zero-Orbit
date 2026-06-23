@@ -4,6 +4,7 @@ const INTRO_DURATION = 3200;
 const EXIT_DURATION = 760;
 const STAR_COUNT = 128;
 const INTRO_EVENT = "home-intro";
+const CABIN_ENTER_EVENT = "home-cabin-enter";
 
 interface WarpStar {
   angle: number;
@@ -16,11 +17,23 @@ interface WarpStar {
 }
 
 export default function HomeIntro() {
+  const [armed, setArmed] = useState(false);
   const [done, setDone] = useState(false);
   const [exiting, setExiting] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    const startIntro = () => {
+      setDone(false);
+      setExiting(false);
+      setArmed(true);
+    };
+    window.addEventListener(CABIN_ENTER_EVENT, startIntro, { once: true });
+    return () => window.removeEventListener(CABIN_ENTER_EVENT, startIntro);
+  }, []);
+
+  useEffect(() => {
+    if (!armed) return;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const root = document.querySelector(".home-orbit-shell");
     const canvas = canvasRef.current;
@@ -202,9 +215,9 @@ export default function HomeIntro() {
       root.classList.remove("home-intro-playing");
       root.classList.remove("home-intro-exiting");
     };
-  }, []);
+  }, [armed]);
 
-  if (done) return null;
+  if (!armed || done) return null;
 
   return (
     <div className={`home-intro-layer ${exiting ? "is-exiting" : ""}`} aria-hidden="true">

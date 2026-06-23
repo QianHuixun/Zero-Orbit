@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ArticleCard from "../components/astro/ArticleCard.astro";
 import ChannelCard from "../components/astro/ChannelCard.astro";
+import CabinGate from "../components/react/home/CabinGate";
 import HomeIntro from "../components/react/home/HomeIntro";
 import HorizontalWheel from "../components/react/home/HorizontalWheel";
 import KnowledgeUniverse from "../components/react/home/KnowledgeUniverse";
@@ -91,6 +92,7 @@ const universeData = {
 
     <HorizontalWheel targetId="home-horizontal" client:load />
     <MeteorCursor client:load />
+    <CabinGate client:load />
     <HomeIntro client:load />
     <main id="home-horizontal" class="home-horizontal" aria-label="横向首页内容">
       <section id="origin" class="home-panel home-panel-hero">
@@ -171,7 +173,6 @@ const universeData = {
     </main>
   </div>
 </BaseLayout>
-
 
 
 

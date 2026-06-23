@@ -142,6 +142,758 @@ a {
   position: absolute;
 }
 
+.home-cabin-visible .home-universe-bg,
+.home-cabin-visible .home-orbit-nav,
+.home-cabin-visible .home-orbit-rail,
+.home-cabin-visible .home-horizontal {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.home-cabin-launching .home-universe-bg {
+  opacity: 0.5;
+  transition: opacity 900ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cabin-gate {
+  background:
+    radial-gradient(circle at 66% 42%, rgb(var(--color-cyan) / 0.22), transparent 18rem),
+    radial-gradient(circle at 50% 48%, rgb(var(--color-violet) / 0.2), transparent 28rem),
+    linear-gradient(180deg, rgb(2 7 17), rgb(5 12 27) 54%, rgb(2 5 12));
+  color: rgb(var(--color-text));
+  inset: 0;
+  overflow: hidden;
+  position: fixed;
+  z-index: 60;
+}
+
+.cabin-gate::before {
+  background:
+    radial-gradient(ellipse at 50% 42%, transparent 0 34%, rgb(0 0 0 / 0.34) 52%, rgb(0 0 0 / 0.78) 100%),
+    linear-gradient(90deg, rgb(0 0 0 / 0.74), transparent 28%, transparent 72%, rgb(0 0 0 / 0.72));
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 4;
+}
+
+.cabin-gate::after {
+  background-image:
+    linear-gradient(rgb(var(--color-cyan) / 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--color-cyan) / 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  content: "";
+  inset: 0;
+  mask-image: radial-gradient(circle at 50% 44%, black, transparent 76%);
+  opacity: 0.72;
+  pointer-events: none;
+  position: absolute;
+  z-index: 5;
+}
+
+.cabin-stars span {
+  background: linear-gradient(90deg, transparent, rgb(var(--color-cyan) / 0.85), transparent);
+  border-radius: 999px;
+  height: 2px;
+  left: var(--x);
+  opacity: 0.7;
+  position: absolute;
+  top: var(--y);
+  transform: rotate(var(--r));
+  width: var(--w);
+  z-index: 1;
+}
+
+.cabin-stars span:nth-child(1) { --x: 16%; --y: 28%; --r: 48deg; --w: 11rem; }
+.cabin-stars span:nth-child(2) { --x: 50%; --y: 20%; --r: -14deg; --w: 16rem; }
+.cabin-stars span:nth-child(3) { --x: 58%; --y: 58%; --r: 28deg; --w: 13rem; }
+.cabin-stars span:nth-child(4) { --x: 8%; --y: 70%; --r: -34deg; --w: 9rem; }
+
+.cabin-window {
+  border: 1px solid rgb(var(--color-cyan) / 0.18);
+  border-radius: 50% / 42%;
+  box-shadow:
+    inset 0 0 120px rgb(var(--color-cyan) / 0.12),
+    inset 0 0 280px rgb(0 0 0 / 0.74),
+    0 0 90px rgb(var(--color-cyan) / 0.08);
+  height: min(72vw, 58rem);
+  left: 50%;
+  overflow: hidden;
+  position: absolute;
+  top: 47%;
+  transform: translate(-50%, -50%);
+  width: min(118vw, 92rem);
+  z-index: 2;
+}
+
+.cabin-nebula {
+  animation: cabin-nebula-drift 38s ease-in-out infinite alternate;
+  background:
+    radial-gradient(circle at 62% 46%, rgb(244 251 255 / 0.72), rgb(var(--color-cyan) / 0.3) 5%, transparent 16%),
+    radial-gradient(circle at 70% 36%, rgb(255 211 106 / 0.3), transparent 12rem),
+    radial-gradient(circle at 38% 58%, rgb(var(--color-violet) / 0.28), transparent 22rem),
+    radial-gradient(circle at 52% 48%, rgb(var(--color-cyan) / 0.24), transparent 30rem),
+    linear-gradient(135deg, rgb(4 11 25), rgb(8 18 38) 48%, rgb(3 8 18));
+  inset: -10%;
+  position: absolute;
+}
+
+.cabin-nebula::before,
+.cabin-nebula::after {
+  animation: cabin-starfield-drift 52s linear infinite;
+  background-image:
+    radial-gradient(circle, rgb(255 255 255 / 0.9) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgb(var(--color-cyan) / 0.7) 0 1px, transparent 1.5px);
+  background-position: 0 0, 34px 46px;
+  background-size: 92px 92px, 138px 138px;
+  content: "";
+  inset: 0;
+  opacity: 0.42;
+  position: absolute;
+}
+
+.cabin-nebula::after {
+  animation-duration: 78s;
+  filter: blur(2px);
+  opacity: 0.24;
+  transform: scale(1.08);
+}
+
+.cabin-megastructure {
+  animation: cabin-megastructure-drift 56s linear infinite;
+  border: 1px solid rgb(var(--color-cyan) / 0.2);
+  border-bottom-color: transparent;
+  border-left-color: rgb(255 211 106 / 0.09);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 46px rgb(var(--color-cyan) / 0.06),
+    0 0 80px rgb(var(--color-cyan) / 0.05);
+  height: 34rem;
+  left: 68%;
+  opacity: 0.62;
+  position: absolute;
+  top: 33%;
+  transform: translate(-50%, -50%) rotate(-18deg) scaleX(1.85);
+  width: 34rem;
+}
+
+.cabin-megastructure::before,
+.cabin-megastructure::after {
+  content: "";
+  position: absolute;
+}
+
+.cabin-megastructure::before {
+  border: 1px solid rgb(var(--color-cyan) / 0.13);
+  border-radius: inherit;
+  inset: 11%;
+}
+
+.cabin-megastructure::after {
+  animation: cabin-megastructure-lines 48s linear infinite;
+  background:
+    linear-gradient(90deg, transparent, rgb(var(--color-cyan) / 0.32), transparent),
+    linear-gradient(90deg, transparent, rgb(255 211 106 / 0.2), transparent);
+  background-position: 50% 38%, 50% 62%;
+  background-repeat: no-repeat;
+  background-size: 110% 1px, 88% 1px;
+  inset: 0;
+  transform: rotate(90deg);
+}
+
+.cabin-gate-ignition {
+  border-radius: 50%;
+  height: 27rem;
+  left: 68%;
+  position: absolute;
+  top: 33%;
+  transform: translate(-50%, -50%) rotate(-18deg) scaleX(1.85);
+  width: 27rem;
+  z-index: 1;
+}
+
+.cabin-gate-ignition span {
+  border: 2px solid transparent;
+  border-radius: inherit;
+  filter: drop-shadow(0 0 16px rgb(var(--color-cyan) / 0.62));
+  inset: var(--inset);
+  opacity: 0;
+  position: absolute;
+}
+
+.cabin-gate-ignition span:nth-child(1) {
+  --inset: 0;
+  animation: cabin-gate-segment 4200ms 680ms ease-out both, cabin-gate-breathe 7200ms 4900ms ease-in-out infinite;
+  border-top-color: rgb(var(--color-cyan) / 0.86);
+}
+
+.cabin-gate-ignition span:nth-child(2) {
+  --inset: 8%;
+  animation: cabin-gate-segment 4200ms 940ms ease-out both, cabin-gate-breathe 7600ms 5100ms ease-in-out infinite;
+  border-right-color: rgb(255 211 106 / 0.72);
+}
+
+.cabin-gate-ignition span:nth-child(3) {
+  --inset: 16%;
+  animation: cabin-gate-segment 4200ms 1210ms ease-out both, cabin-gate-breathe 7000ms 5300ms ease-in-out infinite;
+  border-bottom-color: rgb(var(--color-cyan) / 0.74);
+}
+
+.cabin-gate-ignition span:nth-child(4) {
+  --inset: 25%;
+  animation: cabin-gate-segment 4200ms 1460ms ease-out both, cabin-gate-breathe 6800ms 5500ms ease-in-out infinite;
+  border-left-color: rgb(255 255 255 / 0.68);
+}
+
+.cabin-scan-wave {
+  border: 1px solid rgb(var(--color-cyan) / 0.78);
+  border-radius: 50%;
+  box-shadow:
+    0 0 28px rgb(var(--color-cyan) / 0.36),
+    inset 0 0 28px rgb(var(--color-cyan) / 0.24);
+  height: 6rem;
+  left: 62%;
+  opacity: 0;
+  position: absolute;
+  top: 44%;
+  transform: translate(-50%, -50%) scale(0.18);
+  width: 6rem;
+  z-index: 4;
+}
+
+.cabin-gate:not(.is-launching) .cabin-scan-wave {
+  animation: cabin-scan-burst 2200ms 1650ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cabin-gate-aperture {
+  background:
+    conic-gradient(from 90deg, transparent 0 10%, rgb(var(--color-cyan) / 0.18) 11% 13%, transparent 14% 35%, rgb(255 211 106 / 0.12) 36% 38%, transparent 39% 100%);
+  border-radius: 50%;
+  filter: blur(0.2px);
+  height: 19rem;
+  left: 62%;
+  opacity: 0;
+  position: absolute;
+  top: 44%;
+  transform: translate(-50%, -50%) scale(0.65) rotate(0deg);
+  width: 19rem;
+  z-index: 3;
+}
+
+.cabin-orbit-lines {
+  border: 1px solid rgb(var(--color-cyan) / 0.22);
+  border-left-color: transparent;
+  border-radius: 50%;
+  height: 46rem;
+  left: 50%;
+  position: absolute;
+  top: 48%;
+  transform: translate(-50%, -50%) rotate(-9deg) scaleX(1.65);
+  width: 46rem;
+}
+
+.cabin-orbit-lines::before,
+.cabin-orbit-lines::after {
+  border: 1px solid rgb(var(--color-cyan) / 0.14);
+  border-left-color: transparent;
+  border-radius: inherit;
+  content: "";
+  inset: 14%;
+  position: absolute;
+  transform: rotate(18deg);
+}
+
+.cabin-orbit-lines::after {
+  border-color: rgb(255 211 106 / 0.12);
+  border-right-color: transparent;
+  inset: -22%;
+  transform: rotate(-23deg);
+}
+
+.cabin-hud-drift {
+  inset: 0;
+  position: absolute;
+  z-index: 2;
+}
+
+.cabin-hud-drift span {
+  animation: cabin-hud-breathe 7.5s ease-in-out infinite;
+  border-left: 1px solid rgb(var(--color-cyan) / 0.32);
+  color: rgb(var(--color-cyan) / 0.5);
+  font-family: JetBrains Mono, SFMono-Regular, Consolas, monospace;
+  font-size: clamp(0.55rem, 0.9vw, 0.72rem);
+  left: var(--x);
+  letter-spacing: 0.12em;
+  padding-left: 0.55rem;
+  position: absolute;
+  text-shadow: 0 0 14px rgb(var(--color-cyan) / 0.24);
+  text-transform: uppercase;
+  top: var(--y);
+}
+
+.cabin-hud-drift span:nth-child(1) { --x: 18%; --y: 28%; }
+.cabin-hud-drift span:nth-child(2) { --x: 76%; --y: 24%; animation-delay: -1.5s; }
+.cabin-hud-drift span:nth-child(3) { --x: 62%; --y: 72%; animation-delay: -3s; }
+.cabin-hud-drift span:nth-child(4) { --x: 30%; --y: 68%; animation-delay: -4.5s; }
+.cabin-hud-drift span:nth-child(5) { --x: 80%; --y: 56%; animation-delay: -6s; }
+
+.cabin-glass-reflection {
+  animation: cabin-glass-sweep 18s ease-in-out infinite alternate;
+  background:
+    linear-gradient(112deg, transparent 0 28%, rgb(255 255 255 / 0.1) 30%, transparent 34% 100%),
+    linear-gradient(108deg, transparent 0 50%, rgb(var(--color-cyan) / 0.08) 52%, transparent 57% 100%);
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: 0.72;
+  pointer-events: none;
+  position: absolute;
+  z-index: 3;
+}
+
+.cabin-glass-reflection::before {
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  content: "";
+  height: 76%;
+  left: 16%;
+  position: absolute;
+  top: 7%;
+  transform: rotate(-8deg) scaleX(1.42);
+  width: 68%;
+}
+
+.cabin-jump-core {
+  animation: cabin-core-standby 6.5s ease-in-out infinite;
+  background: radial-gradient(circle, rgb(255 255 255 / 0.95), rgb(var(--color-cyan) / 0.52) 10%, rgb(var(--color-violet) / 0.16) 32%, transparent 68%);
+  border-radius: 999px;
+  filter: blur(0.2px);
+  height: 14rem;
+  left: 62%;
+  opacity: 0.76;
+  position: absolute;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  width: 14rem;
+}
+
+.cabin-frame {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 6;
+}
+
+.cabin-frame-top,
+.cabin-frame-left,
+.cabin-frame-right,
+.cabin-console {
+  position: absolute;
+}
+
+.cabin-frame-top {
+  background: linear-gradient(180deg, rgb(1 5 13 / 0.98), rgb(3 9 20 / 0.74), transparent);
+  border-bottom: 1px solid rgb(var(--color-cyan) / 0.18);
+  height: 14vh;
+  inset: 0 0 auto;
+}
+
+.cabin-frame-left,
+.cabin-frame-right {
+  background: linear-gradient(90deg, rgb(1 5 13 / 0.96), rgb(4 12 25 / 0.58), transparent);
+  bottom: 0;
+  top: 0;
+  width: clamp(4rem, 14vw, 13rem);
+}
+
+.cabin-frame-left { left: 0; }
+.cabin-frame-right { right: 0; transform: scaleX(-1); }
+
+.cabin-console {
+  background:
+    linear-gradient(180deg, transparent, rgb(1 5 13 / 0.92) 36%, rgb(1 5 13)),
+    linear-gradient(90deg, transparent, rgb(var(--color-cyan) / 0.2), transparent);
+  border-top: 1px solid rgb(var(--color-cyan) / 0.22);
+  bottom: 0;
+  height: 23vh;
+  inset-inline: 0;
+  overflow: hidden;
+}
+
+.cabin-console::before {
+  background:
+    linear-gradient(90deg, transparent, rgb(var(--color-cyan) / 0.44), transparent),
+    repeating-linear-gradient(90deg, transparent 0 4.5rem, rgb(var(--color-cyan) / 0.12) 4.5rem 4.55rem, transparent 4.55rem 7.8rem);
+  content: "";
+  height: 1px;
+  left: 12%;
+  opacity: 0.68;
+  position: absolute;
+  right: 12%;
+  top: 31%;
+}
+
+.cabin-console::after {
+  background: radial-gradient(ellipse at 50% 100%, rgb(var(--color-cyan) / 0.18), transparent 58%);
+  bottom: -45%;
+  content: "";
+  height: 100%;
+  left: 10%;
+  position: absolute;
+  right: 10%;
+}
+
+.cabin-console span {
+  animation: cabin-console-flow 4.8s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, rgb(var(--color-cyan) / 0.72), rgb(255 211 106 / 0.36), transparent);
+  height: 1px;
+  left: var(--x);
+  opacity: var(--o);
+  position: absolute;
+  top: var(--y);
+  width: var(--w);
+}
+
+.cabin-console span:nth-child(1) { --x: 18%; --y: 48%; --w: 11rem; --o: 0.58; }
+.cabin-console span:nth-child(2) { --x: 52%; --y: 38%; --w: 17rem; --o: 0.42; animation-delay: -1.6s; }
+.cabin-console span:nth-child(3) { --x: 70%; --y: 68%; --w: 8rem; --o: 0.48; animation-delay: -3.1s; }
+
+.cabin-content {
+  left: clamp(1.25rem, 7vw, 6rem);
+  max-width: min(48rem, 88vw);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-48%);
+  z-index: 10;
+}
+
+.cabin-kicker {
+  color: rgb(var(--color-cyan));
+  font-family: JetBrains Mono, SFMono-Regular, Consolas, monospace;
+  font-size: clamp(0.68rem, 1.2vw, 0.82rem);
+  letter-spacing: 0.14em;
+  margin: 0 0 1.25rem;
+  text-transform: uppercase;
+}
+
+.cabin-content h1 {
+  color: rgb(var(--color-text));
+  font-size: clamp(4rem, 12vw, 10.5rem);
+  font-weight: 760;
+  letter-spacing: 0;
+  line-height: 0.86;
+  margin: 0;
+  max-width: 10ch;
+  text-shadow: 0 0 42px rgb(var(--color-cyan) / 0.14);
+}
+
+.cabin-copy {
+  color: rgb(var(--color-muted));
+  font-size: clamp(1rem, 2.2vw, 1.45rem);
+  line-height: 1.8;
+  margin: clamp(1.2rem, 3vw, 2rem) 0 0;
+  max-width: 44rem;
+}
+
+.cabin-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.7rem;
+}
+
+.cabin-tags span {
+  background: rgb(7 17 35 / 0.46);
+  border: 1px solid rgb(var(--color-line) / 0.7);
+  border-radius: 6px;
+  color: rgb(var(--color-muted));
+  font-size: 0.92rem;
+  padding: 0.7rem 1rem;
+}
+
+.cabin-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: clamp(1.8rem, 4vw, 3rem);
+}
+
+.cabin-actions button,
+.cabin-actions a {
+  align-items: center;
+  border-radius: 6px;
+  display: inline-flex;
+  font-size: 0.95rem;
+  font-weight: 700;
+  gap: 0.75rem;
+  min-height: 3.15rem;
+  padding: 0.9rem 1.35rem;
+}
+
+.cabin-actions button {
+  background: linear-gradient(135deg, rgb(var(--color-cyan)), rgb(99 232 255));
+  border: 0;
+  box-shadow: 0 0 36px rgb(var(--color-cyan) / 0.32), inset 0 1px 0 rgb(255 255 255 / 0.35);
+  color: rgb(var(--color-void));
+  cursor: pointer;
+  transition: box-shadow 260ms ease, transform 260ms ease;
+}
+
+.cabin-actions button i {
+  background: currentColor;
+  height: 1px;
+  position: relative;
+  width: 1.8rem;
+}
+
+.cabin-actions button i::after {
+  border-right: 1px solid currentColor;
+  border-top: 1px solid currentColor;
+  content: "";
+  height: 0.45rem;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 0.45rem;
+}
+
+.cabin-actions button:disabled {
+  cursor: default;
+}
+
+.cabin-actions button:hover:not(:disabled),
+.cabin-actions button:focus-visible:not(:disabled) {
+  box-shadow: 0 0 52px rgb(var(--color-cyan) / 0.48), 0 0 90px rgb(255 211 106 / 0.16), inset 0 1px 0 rgb(255 255 255 / 0.48);
+  transform: translateY(-1px);
+}
+
+.cabin-gate:has(.cabin-actions button:hover) .cabin-jump-core,
+.cabin-gate:has(.cabin-actions button:focus-visible) .cabin-jump-core {
+  animation-duration: 2.8s;
+  filter: blur(0);
+  opacity: 0.98;
+}
+
+.cabin-gate:has(.cabin-actions button:hover) .cabin-gate-aperture,
+.cabin-gate:has(.cabin-actions button:focus-visible) .cabin-gate-aperture {
+  opacity: 0.78;
+  transform: translate(-50%, -50%) scale(0.9) rotate(34deg);
+  transition: opacity 420ms ease, transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cabin-actions a {
+  border: 1px solid rgb(var(--color-cyan) / 0.58);
+  color: rgb(var(--color-cyan));
+}
+
+.cabin-status {
+  bottom: clamp(1rem, 4vw, 2.5rem);
+  color: rgb(var(--color-cyan) / 0.78);
+  display: flex;
+  font-family: JetBrains Mono, SFMono-Regular, Consolas, monospace;
+  font-size: 0.68rem;
+  gap: 1rem;
+  justify-content: space-between;
+  left: clamp(1.25rem, 7vw, 6rem);
+  letter-spacing: 0.12em;
+  position: absolute;
+  right: clamp(1.25rem, 7vw, 6rem);
+  text-transform: uppercase;
+  z-index: 10;
+}
+
+.cabin-gate.is-launching {
+  animation: cabin-launch-fade 1620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cabin-gate.is-launching .cabin-window {
+  animation: cabin-window-jump 1500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cabin-gate.is-launching .cabin-jump-core {
+  animation: cabin-core-jump 1400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cabin-gate.is-launching .cabin-gate-aperture {
+  animation: cabin-aperture-open 1400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cabin-gate.is-launching .cabin-gate-ignition {
+  animation: cabin-gate-flare 1280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cabin-gate.is-launching .cabin-megastructure,
+.cabin-gate.is-launching .cabin-hud-drift,
+.cabin-gate.is-launching .cabin-glass-reflection {
+  animation: cabin-deep-space-stretch 1320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cabin-gate.is-launching .cabin-content,
+.cabin-gate.is-launching .cabin-status,
+.cabin-gate.is-launching .cabin-frame {
+  animation: cabin-ui-dim 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cabin-nebula-drift {
+  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0; filter: brightness(1); }
+  to { background-position: 2.5rem -1rem, -1.8rem 1.4rem, 1.2rem 2.2rem, -2rem -1rem, 0 0; filter: brightness(1.08); }
+}
+
+@keyframes cabin-starfield-drift {
+  from { background-position: 0 0, 34px 46px; }
+  to { background-position: 92px 46px, 172px 138px; }
+}
+
+@keyframes cabin-megastructure-drift {
+  from { filter: brightness(0.9); opacity: 0.5; }
+  50% { filter: brightness(1.16); opacity: 0.68; }
+  to { filter: brightness(0.9); opacity: 0.5; }
+}
+
+@keyframes cabin-megastructure-lines {
+  from { transform: rotate(88deg); }
+  to { transform: rotate(448deg); }
+}
+
+@keyframes cabin-gate-segment {
+  0% { opacity: 0; transform: scale(0.9) rotate(-18deg); }
+  14% { opacity: 1; transform: scale(1.02) rotate(0deg); }
+  28% { opacity: 0.42; }
+  100% { opacity: 0.62; transform: scale(1) rotate(12deg); }
+}
+
+@keyframes cabin-gate-breathe {
+  0%, 100% { filter: drop-shadow(0 0 12px rgb(var(--color-cyan) / 0.32)); opacity: 0.42; }
+  50% { filter: drop-shadow(0 0 22px rgb(var(--color-cyan) / 0.72)); opacity: 0.82; }
+}
+
+@keyframes cabin-scan-burst {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.18); }
+  12% { opacity: 0.9; }
+  72% { opacity: 0.24; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(8.6); }
+}
+
+@keyframes cabin-hud-breathe {
+  0%, 100% { opacity: 0.34; filter: brightness(0.9); }
+  45% { opacity: 0.72; filter: brightness(1.25); }
+}
+
+@keyframes cabin-glass-sweep {
+  from { background-position: -7rem 0, -3rem 0; opacity: 0.46; }
+  to { background-position: 8rem 0, 4rem 0; opacity: 0.76; }
+}
+
+@keyframes cabin-core-standby {
+  0%, 100% { opacity: 0.62; transform: translate(-50%, -50%) scale(0.96); }
+  50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+@keyframes cabin-console-flow {
+  0%, 100% { opacity: calc(var(--o) * 0.55); filter: brightness(0.85); }
+  48% { opacity: var(--o); filter: brightness(1.35); }
+}
+
+@keyframes cabin-launch-fade {
+  0% { opacity: 1; }
+  58% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes cabin-window-jump {
+  0% { filter: brightness(1); transform: translate(-50%, -50%) scale(1); }
+  58% { filter: brightness(1.7) saturate(1.25); transform: translate(-50%, -50%) scale(1.045); }
+  100% { filter: brightness(2.4) blur(8px); transform: translate(-50%, -50%) scale(1.24); }
+}
+
+@keyframes cabin-core-jump {
+  0% { opacity: 0.76; transform: translate(-50%, -50%) scale(1); }
+  46% { opacity: 1; transform: translate(-50%, -50%) scale(1.7); }
+  100% { opacity: 0.2; transform: translate(-50%, -50%) scale(5.4); }
+}
+
+@keyframes cabin-aperture-open {
+  0% { opacity: 0.78; transform: translate(-50%, -50%) scale(0.9) rotate(34deg); }
+  46% { opacity: 1; transform: translate(-50%, -50%) scale(1.45) rotate(110deg); filter: blur(0); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(4.4) rotate(220deg); filter: blur(10px); }
+}
+
+@keyframes cabin-gate-flare {
+  0% { filter: brightness(1); opacity: 1; }
+  42% { filter: brightness(2.2) blur(1px); opacity: 1; }
+  100% { filter: brightness(3) blur(8px); opacity: 0; }
+}
+
+@keyframes cabin-deep-space-stretch {
+  0% { filter: blur(0); opacity: 1; }
+  58% { filter: blur(1px); opacity: 0.78; }
+  100% { filter: blur(8px); opacity: 0; }
+}
+
+@keyframes cabin-ui-dim {
+  to { filter: blur(8px); opacity: 0; transform: translateY(-0.7rem) scale(0.985); }
+}
+
+@media (max-width: 767px) {
+  .cabin-window {
+    height: 74vh;
+    width: 154vw;
+  }
+
+  .cabin-content {
+    top: 46%;
+  }
+
+  .cabin-tags span {
+    font-size: 0.82rem;
+    padding: 0.6rem 0.78rem;
+  }
+
+  .cabin-actions button,
+  .cabin-actions a {
+    min-height: 2.9rem;
+    padding: 0.78rem 1rem;
+  }
+
+  .cabin-frame-left,
+  .cabin-frame-right {
+    width: 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cabin-nebula,
+  .cabin-nebula::before,
+  .cabin-nebula::after,
+  .cabin-megastructure,
+  .cabin-megastructure::after,
+  .cabin-gate-ignition,
+  .cabin-gate-ignition span,
+  .cabin-scan-wave,
+  .cabin-gate-aperture,
+  .cabin-hud-drift span,
+  .cabin-glass-reflection,
+  .cabin-jump-core,
+  .cabin-console span,
+  .cabin-gate.is-launching,
+  .cabin-gate.is-launching .cabin-window,
+  .cabin-gate.is-launching .cabin-jump-core,
+  .cabin-gate.is-launching .cabin-gate-aperture,
+  .cabin-gate.is-launching .cabin-gate-ignition,
+  .cabin-gate.is-launching .cabin-megastructure,
+  .cabin-gate.is-launching .cabin-hud-drift,
+  .cabin-gate.is-launching .cabin-glass-reflection,
+  .cabin-gate.is-launching .cabin-content,
+  .cabin-gate.is-launching .cabin-status,
+  .cabin-gate.is-launching .cabin-frame {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 .home-orbit-nav {
   align-items: center;
   display: flex;
@@ -214,11 +966,12 @@ a {
   pointer-events: none;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
+  scrollbar-width: none;
   z-index: 10;
 }
 
 .home-horizontal::-webkit-scrollbar {
-  height: 10px;
+  display: none;
 }
 
 .home-horizontal::-webkit-scrollbar-track {
@@ -269,6 +1022,14 @@ a {
 .home-panel-inner::-webkit-scrollbar-thumb {
   background: rgb(var(--color-line) / 0.8);
   border-radius: 999px;
+}
+
+.home-horizontal .home-panel-inner {
+  display: none;
+}
+
+.home-horizontal #index.home-panel {
+  display: none;
 }
 
 .home-panel-hero .home-panel-inner {
