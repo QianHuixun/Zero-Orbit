@@ -1,0 +1,22 @@
+services:
+  blog-writer:
+    container_name: blog-writer
+    build:
+      context: .
+      dockerfile: Dockerfile.writer
+    ports:
+      - "8787:8787"
+    environment:
+      NODE_ENV: production
+      PORT: "8787"
+      BLOG_ROOT: /workspace
+      BLOG_WRITER_TOKEN: ${BLOG_WRITER_TOKEN:-change-me}
+    volumes:
+      - ./src/content/posts:/workspace/src/content/posts
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
