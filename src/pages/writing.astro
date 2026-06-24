@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import WritingTerminal from "../components/react/writing/WritingTerminal";
+import { channels } from "../data/channels";
+
+const channelOptions = channels.map((channel) => ({
+  slug: channel.slug,
+  name: channel.name,
+  label: channel.label
+}));
+---
+
+<BaseLayout title="创作终端" description="个人博客的离线写作、MDX 生成与发布引擎入口。">
+  <WritingTerminal channels={channelOptions} client:load />
+</BaseLayout>

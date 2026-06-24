@@ -46,7 +46,7 @@ const universeData = {
       id: "index",
       name: "索引入口",
       label: "Index",
-      href: "#index",
+      href: "/search/",
       summary: "标签、归档和搜索收束成检索入口。"
     }
   ],
@@ -83,7 +83,10 @@ const universeData = {
         <span class="font-mono text-xs tracking-[0.18em] text-text/90 md:text-sm">{site.name}</span>
       </a>
 
-      <a class="rounded-md border border-cyan/50 px-3 py-2 text-xs text-cyan hover:bg-cyan/10" href="/search/">搜索</a>
+      <div class="flex items-center gap-2">
+        <a class="rounded-md border border-amber-200/50 px-3 py-2 text-xs text-amber-100 hover:bg-amber-200/10" href="/writing/">创作终端</a>
+        <a class="rounded-md border border-cyan/50 px-3 py-2 text-xs text-cyan hover:bg-cyan/10" href="/search/">索引</a>
+      </div>
     </header>
 
     <div class="home-orbit-rail" aria-hidden="true">
@@ -173,6 +176,4 @@ const universeData = {
     </main>
   </div>
 </BaseLayout>
-
-
 
