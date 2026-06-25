@@ -96,8 +96,8 @@ export default function CabinGate() {
 
       <div className="cabin-content">
         <p className="cabin-kicker">Personal Beacon</p>
-        <h1>私人知识宇宙</h1>
-        <p className="cabin-copy">我在这里记录技术、创造、阅读和生活中的问题、判断与复盘。它不是一个完成的知识库，而是一个持续生长的思考现场。</p>
+        <h1>Zero Orbit</h1>
+        <p className="cabin-copy">我在这里记录技术、创造、阅读和生活中的问题、判断与复盘。它不是一个完成的知识库，而是一片持续校准的思考星图。</p>
 
         <div className="cabin-beacon" aria-label="个人信标">
           <section>
@@ -115,7 +115,7 @@ export default function CabinGate() {
           </section>
 
           <section>
-            <h2>现在</h2>
+            <h2>轨道状态</h2>
             <ul>
               {nowItems.map((item) => <li key={item}>{item}</li>)}
             </ul>

@@ -1,4 +1,4 @@
-# Knowledge Orbit
+# Zero Orbit
 
 一个黑暗高级、轻科幻风格的个人网站+博客。项目使用 Astro 管理静态内容和页面，用 React Islands 承载交互，用 React Three Fiber 实现首页宇宙知识星图，用 Pagefind 生成静态搜索索引。
 
