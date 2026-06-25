@@ -476,10 +476,16 @@ function ChannelMoon({
       </mesh>
       {(parentActive || hovered) && (
         <Html center distanceFactor={7.5} className="pointer-events-none w-44 select-none" style={{ opacity: intro.labels }}>
-          <div className={`scan-preview ${hovered ? "scan-preview-active" : ""}`}>
+          <div className={`scan-preview ${hovered ? "scan-preview-active" : "scan-preview-compact"}`}>
             <div className="font-medium text-text">{channel.name}</div>
-            <div className="mt-1 line-clamp-2 text-[10px] leading-4 text-muted">{channel.description}</div>
-            <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.12em] text-cyan">{channel.count} logs</div>
+            {hovered ? (
+              <>
+                <div className="mt-1 line-clamp-2 text-[10px] leading-4 text-muted">{channel.description}</div>
+                <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.12em] text-cyan">{channel.count} logs</div>
+              </>
+            ) : (
+              <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-cyan">{channel.count} logs</div>
+            )}
           </div>
         </Html>
       )}
@@ -581,13 +587,19 @@ function ArticleMoon({
       </mesh>
       {(parentActive || hovered) && (
         <Html center distanceFactor={7.5} className="pointer-events-none w-56 select-none" style={{ opacity: intro.labels }}>
-          <div className={`scan-preview ${hovered ? "scan-preview-active" : ""}`}>
-            <div className="font-medium leading-4 text-text">{post.title}</div>
-            <div className="mt-1 line-clamp-2 text-[10px] leading-4 text-muted">{post.summary}</div>
-            <div className="mt-2 flex flex-wrap gap-1 font-mono text-[9px] uppercase tracking-[0.08em] text-cyan">
-              <span>{post.channel}</span>
-              {post.tags.slice(0, 2).map((tag) => <span key={tag}>/{tag}</span>)}
-            </div>
+          <div className={`scan-preview ${hovered ? "scan-preview-active" : "scan-preview-compact"}`}>
+            <div className={`font-medium leading-4 text-text ${hovered ? "" : "line-clamp-1"}`}>{post.title}</div>
+            {hovered ? (
+              <>
+                <div className="mt-1 line-clamp-2 text-[10px] leading-4 text-muted">{post.summary}</div>
+                <div className="mt-2 flex flex-wrap gap-1 font-mono text-[9px] uppercase tracking-[0.08em] text-cyan">
+                  <span>{post.channel}</span>
+                  {post.tags.slice(0, 2).map((tag) => <span key={tag}>/{tag}</span>)}
+                </div>
+              </>
+            ) : (
+              <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.08em] text-cyan">{post.channel}</div>
+            )}
           </div>
         </Html>
       )}
