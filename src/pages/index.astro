@@ -7,6 +7,7 @@ import HomeIntro from "../components/react/home/HomeIntro";
 import HorizontalWheel from "../components/react/home/HorizontalWheel";
 import KnowledgeUniverse from "../components/react/home/KnowledgeUniverse";
 import MeteorCursor from "../components/react/home/MeteorCursor";
+import OrbitReturn from "../components/react/home/OrbitReturn";
 import { channels } from "../data/channels";
 import { site } from "../data/site";
 import { getAllTags, getFeaturedPosts, getLatestPosts, getPostsByChannel, getPublishedPosts } from "../lib/content";
@@ -88,6 +89,8 @@ const universeData = {
         <span class="writing-dock__label" aria-hidden="true">创作终端</span>
       </a>
     </header>
+
+    <OrbitReturn client:load />
 
     <div class="home-orbit-rail" aria-hidden="true">
       <span></span><span></span><span></span><span></span><span></span>
