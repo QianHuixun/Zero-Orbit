@@ -131,9 +131,11 @@ export default function HomeIntro() {
       const burst = easeOutCubic(clamp((progress - 0.18) / 0.32));
       const settle = clamp((progress - 0.48) / 0.24);
       const fade = Math.max(1 - easeOutCubic(clamp((progress - 0.72) / 0.28)), 0.12 * (1 - easeOutCubic(exitProgress)));
-      const cx = window.innerWidth * 0.5;
-      const cy = window.innerHeight * 0.48;
-      const maxRadius = Math.hypot(window.innerWidth, window.innerHeight) * 0.78;
+      const laptopCompact = window.innerWidth >= 768 && window.innerHeight <= 900;
+      const laptopTight = window.innerWidth >= 768 && window.innerHeight <= 760;
+      const cx = window.innerWidth * (laptopCompact ? 0.54 : 0.5);
+      const cy = window.innerHeight * (laptopTight ? 0.36 : laptopCompact ? 0.4 : 0.48);
+      const maxRadius = Math.hypot(window.innerWidth, window.innerHeight) * (laptopTight ? 0.52 : laptopCompact ? 0.58 : 0.78);
 
       context.clearRect(0, 0, window.innerWidth, window.innerHeight);
       context.fillStyle = `rgba(5, 9, 18, ${Math.max(0.92 * fade - exitProgress * 0.38, 0)})`;
@@ -168,7 +170,9 @@ export default function HomeIntro() {
         context.stroke();
       }
 
-      drawOrbitEcho(cx, cy, window.innerWidth, window.innerHeight, progress, fade + 0.1 * (1 - easeOutCubic(exitProgress)));
+      const orbitEchoWidth = window.innerWidth * (laptopCompact ? 0.68 : 1);
+      const orbitEchoHeight = window.innerHeight * (laptopCompact ? 0.68 : 1);
+      drawOrbitEcho(cx, cy, orbitEchoWidth, orbitEchoHeight, progress, fade + 0.1 * (1 - easeOutCubic(exitProgress)));
 
       if (elapsed >= INTRO_DURATION) startExit();
       if (!finished) frame = window.requestAnimationFrame(render);
