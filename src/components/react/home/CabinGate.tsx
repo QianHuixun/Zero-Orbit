@@ -3,6 +3,14 @@ import { useEffect, useState } from "react";
 const CABIN_ENTER_EVENT = "home-cabin-enter";
 const ORBIT_ENTERED_KEY = "home-orbit-entered";
 
+const currentCoordinates = ["AI 辅助开发", "个人知识管理", "产品系统", "阅读整理"];
+const writingPrinciples = ["不追热点，追问题", "不求完整，求可回溯", "不只写结论，也保存过程"];
+const nowItems = [
+  "搭建个人网站的写作与发布系统。",
+  "整理 AI 辅助开发的实践经验。",
+  "把阅读笔记迁移成可检索的长期记录。"
+];
+
 export default function CabinGate() {
   const [launching, setLaunching] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -87,14 +95,33 @@ export default function CabinGate() {
       </div>
 
       <div className="cabin-content">
-        <p className="cabin-kicker">Private Knowledge Terminal</p>
-        <h1>Knowledge Orbit</h1>
-        <p className="cabin-copy">记录技术、创造、阅读与生活的私人知识终端。</p>
-        <div className="cabin-tags" aria-label="当前关注">
-          <span>AI 工具</span>
-          <span>产品系统</span>
-          <span>长期写作</span>
+        <p className="cabin-kicker">Personal Beacon</p>
+        <h1>私人知识宇宙</h1>
+        <p className="cabin-copy">我在这里记录技术、创造、阅读和生活中的问题、判断与复盘。它不是一个完成的知识库，而是一个持续生长的思考现场。</p>
+
+        <div className="cabin-beacon" aria-label="个人信标">
+          <section>
+            <h2>当前坐标</h2>
+            <div className="cabin-tags">
+              {currentCoordinates.map((item) => <span key={item}>{item}</span>)}
+            </div>
+          </section>
+
+          <section>
+            <h2>记录原则</h2>
+            <ul>
+              {writingPrinciples.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </section>
+
+          <section>
+            <h2>现在</h2>
+            <ul>
+              {nowItems.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </section>
         </div>
+
         <div className="cabin-actions">
           <button type="button" onClick={enterOrbit} disabled={launching}>
             <span>{launching ? "启动中" : "进入星轨"}</span>
